@@ -12,5 +12,5 @@ jobs:
       - run: uv sync
       - run: uv run ruff check .
       # Offline: uses the deterministic fake model, so no API key or spend in CI.
+      # The eval gate is tests/test_eval_suite.py. The eval CLI is for live runs (it exits 1 with the fake model).
       - run: uv run pytest -q
-      - run: uv run python -m claims_rag.evals
