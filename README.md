@@ -66,8 +66,28 @@ The report is written to `eval-report/report.md`. The CLI exits 1 below a 90% pa
 The offline run uses a fake, extractive "model". It checks the plumbing: retrieval, prompt assembly, citation
 parsing, abstention, cost accounting. The CI gate only asserts retrieval, context recall, citation validity and
 abstention. Fact coverage and pass rate are reported but not gated offline, because the fake often picks the wrong
-sentence from correct context, so the offline CLI run exits 1 by design. Answer quality needs a live run, and **this
-repo has no live results yet**.
+sentence from correct context, so the offline CLI run exits 1 by design. Answer quality needs a live run (below).
+
+### Live run (Claude, 2026-10-05)
+
+One run against `claude-opus-5-5` (effort low) with `claude-haiku-4-5` as judge:
+
+| metric | value |
+|---|---|
+| retrieval recall (expected doc in top-k) | 100% |
+| context recall | 100% |
+| fact coverage | 100% |
+| citation validity | 100% |
+| citation correctness | 100% |
+| abstain accuracy | 100% |
+| case pass rate | 100% |
+| judge groundedness (1-5) | 5.00 |
+| cost for the run | about $0.05 |
+
+Read this with care: it is a single run, the golden set is 15 cases written by the same person who wrote the corpus,
+retrieval was tuned against that set (see below), and the judge is a smaller model grading a larger one's short,
+extractive-style answers, so a perfect score there is weak evidence. It shows the pipeline works end to end with
+Claude. It does not show how the system would do on questions it has not seen.
 
 ### Lessons carried over from the Java version
 
