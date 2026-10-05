@@ -5,7 +5,7 @@ A sample **FastAPI** service that answers questions about (invented) health-insu
 
 > **Honest scope:** this is a learning and portfolio project. It runs on synthetic data, has no real users, and makes no
 > production-scale claims. It shows how I would structure an LLM-backed service, measure its quality and track what it costs.
-> A sibling repo, [`claims-rag-java`](https://github.com/MAM-AI-Projects/claims-rag-java), implements the same service in Java and Spring Boot with the same corpus, golden set and metrics.
+> A sibling repo, [`claims-rag-java`](https://github.com/miguelmora76/claims-rag-java), implements the same service in Java and Spring Boot with the same corpus, golden set and metrics.
 
 ## Contents
 
@@ -75,7 +75,7 @@ By default the app uses a **fake model**, so you can install, test and call it w
 install with `brew install uv` or see the uv docs). Developed on Python 3.14.
 
 ```bash
-git clone https://github.com/MAM-AI-Projects/claims-rag-python.git
+git clone https://github.com/miguelmora76/claims-rag-python.git
 cd claims-rag-python
 
 uv sync                                          # create .venv and install dependencies
