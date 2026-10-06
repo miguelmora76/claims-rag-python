@@ -20,3 +20,4 @@ jobs:
       smoke-path: /api/ask
       smoke-body: '{"question":"How many days do I have to file a first-level appeal?"}'
       smoke-expect: 'appeals#0'
+      platform-ref: add-smoke-cli
