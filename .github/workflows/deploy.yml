@@ -12,7 +12,11 @@ permissions:
 
 jobs:
   smoke-deploy:
-    uses: miguelmora76/platform-workflows/.github/workflows/build-deploy.yml@main
+    uses: miguelmora76/platform-workflows/.github/workflows/build-deploy.yml@add-smoke-cli
     with:
       service: claims-rag-python
       values-file: deploy/values.yaml
+      smoke-port: '8000'
+      smoke-path: /api/ask
+      smoke-body: '{"question":"How many days do I have to file a first-level appeal?"}'
+      smoke-expect: 'appeals#0'
