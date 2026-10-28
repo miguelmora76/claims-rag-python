@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     max_tokens: int = 1024
     effort: str = "low"  # blank to omit; Haiku and older models reject the effort param
     top_k: int = 3
+    eval_report_dir: str = Field("eval-report", validation_alias="EVAL_REPORT_DIR")
     min_score: float = 0.08
     pricing: dict[str, Price] = {
         "claude-opus-5-5": Price(input=4.00, output=20.00, cache_read=0.20, cache_write=5.00),

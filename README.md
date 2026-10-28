@@ -62,7 +62,7 @@ deterministic fake, while the real thing calls Claude.
 | Provider protocol with an offline fake for tests and CI | `llm.py` (`LlmClient`, `FakeLlmClient`) |
 | RAG: chunking, embeddings, vector search, grounded prompt with citations | `rag.py`, `service.py` |
 | Prompt-injection posture: untrusted context, answer-only-from-context, explicit abstain token | `service.SYSTEM` |
-| Token and cost tracking per request and per model | `cost.py`, `GET /api/usage` |
+| Token and cost tracking per request and per model | `cost.py`, `GET /api/usage`, `GET /metrics` |
 | Eval suite: golden set, retrieval/context/citation/abstention metrics, optional LLM judge | `evals/` |
 | Eval as a CI gate | `tests/test_eval_suite.py`, `.github/workflows/ci.yml` |
 | Pattern-based redaction before text leaves the service | `privacy.py` |
@@ -131,7 +131,7 @@ ASSISTANT_PROVIDER=claude uv run uvicorn --factory claims_rag.api:app
 (In zsh, `read -s` works as shown. In bash use `read -s ANTHROPIC_API_KEY; export ANTHROPIC_API_KEY`.)
 
 Then call the same endpoints as above. The response now contains real token counts and a non-zero `cost_usd`, and
-`GET /api/usage` shows the running totals per model.
+`GET /api/usage` shows this instance's running totals per model. For totals across replicas and restarts, scrape `GET /metrics` (`assistant_llm_tokens_total`, `assistant_llm_cost_usd_total`, `assistant_llm_requests_total`, tagged by model) and sum in Prometheus. `GET /healthz` and `GET /readyz` are the liveness and readiness probes.
 
 The default model is `claude-opus-5-5` at `effort=low`. Change it with the `ASSISTANT_*` variables below.
 
@@ -252,7 +252,7 @@ Settings live in `src/claims_rag/config.py` and can be overridden with environme
 
 The price table (USD per million tokens, per model) is in `config.py`. It was copied from published rates; verify before relying on it.
 
-Other environment variables: `ANTHROPIC_API_KEY` (required for `ASSISTANT_PROVIDER=claude`) and `ANTHROPIC_WORKSPACE_ID` (only for `sk-ant-usr-` keys).
+Other environment variables: `PORT` (default 8000, set in the container), `EVAL_REPORT_DIR` (default `eval-report`), `LOG_FORMAT=json` (JSON logs on stdout), `ANTHROPIC_API_KEY` (required for `ASSISTANT_PROVIDER=claude`) and `ANTHROPIC_WORKSPACE_ID` (only for `sk-ant-usr-` keys).
 
 ## Project layout
 
@@ -262,7 +262,7 @@ src/claims_rag/
   llm.py             LlmClient protocol, Claude implementation, offline fake, usage types
   rag.py             chunker, hashing embedder, vector store, retriever
   service.py         redact -> retrieve -> prompt -> model -> cite -> cost
-  cost.py            token usage to USD, per-model totals
+  cost.py            token usage to USD, recorded as Prometheus counters
   privacy.py         regex redaction of common identifiers
   api.py             FastAPI app and endpoints
   corpus/*.md        the invented policy documents

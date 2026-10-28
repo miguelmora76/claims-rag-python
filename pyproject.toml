@@ -8,6 +8,7 @@ dependencies = [
     "anthropic>=1.0",
     "fastapi>=0.115",
     "pydantic>=2.8",
+    "prometheus-client>=0.20",
     "pydantic-settings>=2.4",
     "uvicorn>=0.30",
 ]

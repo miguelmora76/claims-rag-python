@@ -41,3 +41,15 @@ def test_llm_failure_maps_to_503_when_retryable():
 
     c = TestClient(create_app(Settings(provider="fake"), llm=Boom()))
     assert c.post("/api/ask", json={"question": "How many days for a first-level appeal?"}).status_code == 503
+
+
+def test_health_endpoints(client):
+    assert client.get("/healthz").json() == {"status": "UP"}
+    assert client.get("/readyz").json() == {"status": "UP"}
+
+
+def test_metrics_expose_token_and_cost_counters(client):
+    client.post("/api/ask", json={"question": "How many days do I have to file a first-level appeal?"})
+    text = client.get("/metrics").text
+    assert 'assistant_llm_requests_total{model="fake"} 1.0' in text
+    assert "assistant_llm_tokens_total" in text and "assistant_llm_cost_usd_total" in text
