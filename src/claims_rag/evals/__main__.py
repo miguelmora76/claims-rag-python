@@ -30,8 +30,9 @@ def main() -> int:
         return 2
     md = report.to_markdown()
     print(md)
-    Path("eval-report").mkdir(exist_ok=True)
-    Path("eval-report/report.md").write_text(md, encoding="utf-8")
+    report_dir = Path(settings.eval_report_dir)
+    report_dir.mkdir(parents=True, exist_ok=True)
+    (report_dir / "report.md").write_text(md, encoding="utf-8")
     if report.pass_rate < MIN_PASS_RATE:
         print(f"pass rate {report.pass_rate:.0%} below threshold {MIN_PASS_RATE:.0%}", file=sys.stderr)
         return 1

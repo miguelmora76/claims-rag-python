@@ -11,7 +11,8 @@ FROM python:3.12-slim
 RUN useradd --system --uid 10001 app
 WORKDIR /app
 COPY --from=build /app/.venv /app/.venv
-ENV PATH="/app/.venv/bin:$PATH" PYTHONUNBUFFERED=1
+ENV PATH="/app/.venv/bin:$PATH" PYTHONUNBUFFERED=1 PORT=8000
 USER 10001
 EXPOSE 8000
-CMD ["uvicorn", "--factory", "claims_rag.api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Port from the environment; exec so uvicorn gets SIGTERM and drains in-flight requests before exiting.
+CMD ["sh", "-c", "exec uvicorn --factory claims_rag.api:app --host 0.0.0.0 --port ${PORT} --timeout-graceful-shutdown 20"]
